@@ -6,7 +6,7 @@
 @custom-variant short (@media (max-height: 480px) and (min-width: 640px));
 
 /*
- * Design tokens. Every screen draws from these; see "Visual system" in the README.
+ * Design tokens. Every screen draws from these; see "Visual system" in docs/INTERFACE.md.
  *
  * Colour roles: cyan = interaction, focus and selection; violet = energy and
  * progression; amber = warning; danger = critical and destructive; mint =

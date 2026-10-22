@@ -4,7 +4,7 @@ Run from a clean checkout. Steps marked _(server)_ need the production preview r
 
 ## What changed
 
-See [RELEASE_NOTES.md](RELEASE_NOTES.md): the full-screen landing page, the interface overhaul, and what stayed the same.
+See the 1.3.0 entry in [CHANGELOG.md](../CHANGELOG.md): the full-screen landing page, the interface overhaul, and what stayed the same.
 
 ## Before tagging
 

@@ -1,0 +1,53 @@
+name: Bug report
+description: Something in the game or the tooling doesn't work as expected.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you see, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. New Run → Pulse Rifle → Deploy
+        2. Reach wave 5 and dash into the Warden's charge
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      description: Shown in the main menu footer (for example V1.3), or a commit hash.
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: Chrome 155, Safari 19, Firefox 140...
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Device and operating system
+      placeholder: MacBook Air M2 / macOS, Pixel 8 / Android 16...
+    validations:
+      required: true
+  - type: dropdown
+    id: input
+    attributes:
+      label: Input method
+      options:
+        - Keyboard and mouse
+        - Touch
+        - Both
+  - type: textarea
+    id: extra
+    attributes:
+      label: Screenshots, console errors or recordings
+      description: The browser console (F12) often shows the cause. For performance problems, turn on Settings → Show FPS counter and include what it shows.

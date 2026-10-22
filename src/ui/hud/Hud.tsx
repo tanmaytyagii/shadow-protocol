@@ -58,7 +58,10 @@ export function Hud({ touch }: { touch: boolean }) {
         {hud.boss ? <BossBar hud={hud} /> : <WaveInfo hud={hud} />}
       </div>
 
-      <Banner />
+      {/* The augment picker sits over the banner's slot; hide it there but let its timer run. */}
+      <div className={phase === 'levelup' ? 'invisible' : undefined}>
+        <Banner />
+      </div>
       <Toasts />
       {phase === 'playing' && <FirstRunHint hud={hud} touch={touch} />}
 

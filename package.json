@@ -16,7 +16,11 @@
     "audio:levels": "node scripts/audio-levels.mjs",
     "soak": "node scripts/soak.mjs",
     "screens": "node scripts/screens.mjs",
-    "landing:qa": "node scripts/landing-qa.mjs"
+    "landing:qa": "node scripts/landing-qa.mjs",
+    "docs:screenshots": "node scripts/readme-shots.mjs"
+  },
+  "engines": {
+    "node": "^22.13.0 || >=24"
   },
   "dependencies": {
     "@fontsource-variable/jetbrains-mono": "^5.3.0",

@@ -1,335 +1,260 @@
-# SHADOW PROTOCOL
+<div align="center">
 
-A cyberpunk arcade survival shooter for the browser. You are a rogue operative trapped in a hostile containment facility. Survive ten escalating waves, install augments, collect weapons, and take down two bosses: the **Warden** at wave 5 and the **Null Sovereign** at wave 10.
+<img src="docs/brand/banner.webp" alt="SHADOW PROTOCOL: a cyberpunk arcade survival shooter" width="100%">
 
-Every visual is drawn with Canvas 2D and every sound is synthesised with the Web Audio API. There are no image or audio assets, and no server is needed.
+**Ten waves. Two bosses. One way out.**
+
+A cyberpunk arcade survival shooter for the browser. Every pixel is drawn live on an HTML5 canvas and every sound is synthesised at runtime: no image files, no audio files, no server.
+
+[![CI](https://github.com/tanmaytyagii/shadow-protocol/actions/workflows/ci.yml/badge.svg)](https://github.com/tanmaytyagii/shadow-protocol/actions/workflows/ci.yml)
+![Version](https://img.shields.io/badge/version-1.3.0-3ef2ff)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-19-149eca?logo=react&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-8-646cff?logo=vite&logoColor=white)
+![Canvas](https://img.shields.io/badge/render-Canvas_2D-9d6bff)
+![Web Audio](https://img.shields.io/badge/audio-Web_Audio_API-ff3d9a)
+
+[Features](#features) · [Screenshots](#screenshots) · [Quick start](#quick-start) · [Controls](#controls) · [Architecture](#architecture) · [Testing](#testing) · [Contributing](#contributing)
+
+<img src="docs/screenshots/hero-gameplay.webp" alt="Animated gameplay: the operative fires Seeker Swarm missiles at the Warden while dodging its charge lane and a gapped shockwave ring" width="100%">
+
+<sub>The Warden fight at wave 5, from an unassisted run, recorded from the production build in Chrome.</sub>
+
+</div>
+
+## About the game
+
+You are a rogue operative trapped on a reactor platform above an abyss. Hostiles pour through spawn portals in ten escalating waves. Between fights you install augments that reshape your build, pick up heavier weapons, and push toward the two bosses: the **Warden** at wave 5 and the **Null Sovereign** at wave 10.
+
+It plays like a twin-stick arena shooter with roguelite progression. Runs take minutes, the game saves a checkpoint at each wave, and new loadouts and a Nightmare difficulty unlock as you go further.
+
+**Why it's different:**
+
+- **Fully procedural.** The arena, effects, lighting and post-processing are drawn with Canvas 2D; the music, ambience and effects are synthesised with the Web Audio API. The only shipped assets are two fonts.
+- **Readable chaos.** Every enemy and boss attack is telegraphed, and the telegraphs are drawn from the real collision values. What you see is exactly what hits.
+- **Built to run anywhere.** An adaptive quality governor scales decorative effects to hold the frame rate, there's a full touch twin-stick mode, and the interface reflows from a 320 px phone to an ultrawide monitor.
+
+## Features
+
+| Area | What's in the game |
+| --- | --- |
+| **Combat** | Mouse-aimed shooting, a dash with invulnerability frames that passes through enemies and bullets, an energy-draining boost, hit-stop and screen shake. |
+| **Arsenal** | Four weapons: Pulse Rifle (infinite), Scatter Cannon, Rail Lancer (piercing) and Seeker Swarm (homing). |
+| **Enemies** | Hunter Drones, Sentinels, Brutes, Wraiths and Splitters, plus tougher elite variants with better loot. |
+| **Bosses** | The two-phase **Warden** and the three-phase **Null Sovereign**: bullet novas, gapped rings, sweeping and crossed lasers, mines and teleports, each with its own arrival sequence. |
+| **Progression** | XP shards and level-ups with 3-of-21 rarity-weighted augments (crits, piercing, multishot, lifesteal, explosive rounds and more). Timed power-ups, supply drops and a combo multiplier up to ×3. |
+| **Persistence** | High scores and records, loadout and difficulty unlocks, and a per-wave checkpoint with **Continue**, all saved in `localStorage`. |
+| **Visuals** | A layered parallax arena, dynamic floor lighting, bloom, refraction shockwaves and colour grading that follows combat intensity. Low/Medium/High presets plus automatic scaling. |
+| **Audio** | A synthesised soundtrack, reactor ambience and per-attack boss cues, through a compressor and limiter, with master/music/effects volumes and mute. |
+| **Platforms** | Keyboard and mouse, or touch twin-stick controls. A responsive interface with keyboard navigation, focus rings and 44 px touch targets. |
+| **Comfort** | Reduce motion (follows the OS setting), a screen-shake slider, optional damage numbers, and auto-pause when the tab loses focus. |
+
+The full rules, enemy roster and augment list are in the **[game guide](docs/GAMEPLAY.md)**.
+
+## Screenshots
+
+All images are captured from the production build in headless Chrome by [`scripts/readme-shots.mjs`](scripts/readme-shots.mjs). See [how they were made](docs/screenshots/README.md).
+
+### The experience
+
+<img src="docs/screenshots/main-menu.webp" alt="Main menu: the SHADOW PROTOCOL title, Continue and New Run actions, and the operative record panel over the live reactor deck">
+
+*The main menu runs over the live arena. Continue resumes the last checkpoint; the operative record shows saved stats and unlocks.*
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/title-screen.webp" alt="Title card at the end of the opening cinematic, with the Start Game button"></td>
+    <td width="50%"><img src="docs/screenshots/gameplay-combat.webp" alt="Wave 2: the operative fires the Pulse Rifle at a swarm of drones, with hull, shield and energy bars top-left"></td>
+  </tr>
+  <tr>
+    <td><em>The opening cinematic ends on an establishing shot of the platform.</em></td>
+    <td><em>Wave combat with the full HUD: vitals, wave counter, score, dash and boost readiness, and the weapon bar.</em></td>
+  </tr>
+</table>
+
+### Combat and boss encounters
+
+<img src="docs/screenshots/boss-sovereign.webp" alt="Null Sovereign phase 3: two crossed magenta lasers sweep the arena while the player strafes and fires">
+
+*Null Sovereign, phase 3 of 3: crossed sweeping lasers. The boss bar marks each phase threshold.*
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/boss-warden.webp" alt="The Warden fires a curved fan volley of glowing magenta bullets across the deck"></td>
+    <td width="50%"><img src="docs/screenshots/enemy-wave.webp" alt="A pack of drones and sentinels closes on the player across the reactor deck"></td>
+  </tr>
+  <tr>
+    <td><em>The Warden's second phase: fan volleys with gaps to dodge through.</em></td>
+    <td><em>Mixed waves arrive through portals and close in from several sides.</em></td>
+  </tr>
+</table>
+
+### Progression and upgrades
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/upgrade-selection.webp" alt="Select augment screen with three cards, each showing rarity, effect and rank"></td>
+    <td width="50%"><img src="docs/screenshots/loadout.webp" alt="Loadout screen: four weapon cards with damage, fire rate, range and ammo, and Standard or Nightmare difficulty"></td>
+  </tr>
+  <tr>
+    <td><em>Each level-up pauses the fight and offers three augments, weighted by rarity.</em></td>
+    <td><em>Pick a starting weapon and difficulty. Loadouts unlock as you progress.</em></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/game-over.webp" alt="Defeat screen with final score and run statistics"></td>
+    <td><img src="docs/screenshots/victory.webp" alt="Protocol Complete victory screen with final score, a New Record badge and run statistics"></td>
+  </tr>
+  <tr>
+    <td><em>Defeat on wave 6 after beating the Warden, from an unassisted run.</em></td>
+    <td><em>Victory after the Null Sovereign falls. This capture skipped ahead with debug mode, hence the short run stats.</em></td>
+  </tr>
+</table>
+
+### Menus and settings
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/settings.webp" alt="Settings: audio sliders, screen shake, reduce motion, damage numbers, touch controls and graphics quality"></td>
+    <td width="50%"><img src="docs/screenshots/pause-menu.webp" alt="Pause menu over the frozen, desaturated arena"></td>
+  </tr>
+  <tr>
+    <td><em>Audio, gameplay comfort and graphics settings apply immediately and are saved on the device.</em></td>
+    <td><em>Pausing desaturates the frozen arena. <code>Esc</code> always steps back exactly one level.</em></td>
+  </tr>
+</table>
+
+### Responsive and mobile
+
+<table>
+  <tr>
+    <td width="30%"><img src="docs/screenshots/mobile-menu.webp" alt="Main menu on a 390 px wide phone, stacked into one column"></td>
+    <td width="30%"><img src="docs/screenshots/mobile-gameplay.webp" alt="Phone gameplay with the left movement stick, right aim stick, and Dash, Boost and Swap buttons"></td>
+    <td width="40%"><em>On a 390 × 844 phone viewport, the menu stacks into one column and the HUD compacts. Touch play uses two virtual sticks (left half moves, right half aims and fires) plus Dash, Boost and Swap buttons.<br><br>Captured with Chrome's mobile emulation; see <a href="docs/KNOWN_ISSUES.md">known issues</a> for real-device testing status.</em></td>
+  </tr>
+</table>
 
 ## Quick start
 
-Requires Node.js 20+ (developed on Node 24).
+### Requirements
+
+- **Node.js 22.13+ or 24** (`.nvmrc` pins 24). Vitest 5 and ESLint 10 don't support Node 20.
+- **npm** (bundled with Node). The repository ships a `package-lock.json`.
+- A current desktop or mobile browser. Development and automated testing use Chrome.
+
+### Run it
 
 ```bash
-npm ci             # installs exactly what package-lock.json lists (npm install also works)
-npm run dev        # http://localhost:5173
+git clone https://github.com/tanmaytyagii/shadow-protocol.git
+cd shadow-protocol
+npm ci          # installs exactly what package-lock.json lists
+npm run dev     # http://localhost:5173
 ```
 
-Production build:
+These commands are the same on macOS, Linux and Windows (PowerShell or Command Prompt).
+
+### Build for production
 
 ```bash
-npm run build      # type-checks, then bundles into dist/
-npm run preview    # serves dist/ at http://localhost:4173
+npm run build     # type-check, then bundle into dist/
+npm run preview   # serve dist/ at http://localhost:4173
 ```
 
-`dist/` is fully static (relative asset paths), so it can be hosted on any static file host, including from a sub-directory. See [Deploying](#deploying).
+`dist/` is fully static with relative paths, so any static host works, including a sub-directory. See **[deployment](docs/DEPLOYMENT.md)**.
+
+### Troubleshooting
+
+| Problem | Fix |
+| --- | --- |
+| `npm ci` or `npm test` fails with an engine or syntax error | Check `node -v`; use Node 22.13+ or 24 (`nvm use` reads `.nvmrc`). |
+| Port 5173 is already in use | Vite picks the next free port and prints it. Or run `npm run dev -- --port 3000`. |
+| No sound | Browsers block audio until the first click, tap or key press. Also check **Settings → Mute**. |
+| Low frame rate | Lower **Settings → Graphics quality**. The game also scales effects down automatically. **Show FPS counter** displays the current step. |
+| Blank page when opening `dist/index.html` directly | Serve it over HTTP (`npm run preview`); browsers block ES modules from `file://`. |
+| Want a clean slate | **Settings → Reset progress**, or clear the site's storage in the browser. |
 
 ## Controls
 
-| Action | Keyboard / mouse | Touch |
+| Action | Keyboard and mouse | Touch |
 | --- | --- | --- |
-| Move | `W A S D` or arrow keys | Drag on the left half of the screen |
-| Aim | Mouse | Drag on the right half of the screen |
-| Fire | Hold left click | Fires while aiming |
-| Dash (brief invulnerability) | `Space` | **Dash** button |
+| Move | `W` `A` `S` `D` or arrow keys | Drag on the left half of the screen |
+| Aim and fire | Mouse; hold left button | Drag on the right half (fires while aiming) |
+| Dash (brief invulnerability) | `Space` | **Dash** |
 | Boost (drains energy) | Hold `Shift` | Hold **Boost** |
-| Switch weapon | `1`–`4`, `Q` / `E`, mouse wheel | **Swap** button |
+| Switch weapon | `1`–`4`; `Q` / `E` or wheel for previous / next | **Swap** |
 | Pause | `Esc` or `P` | Pause button |
-| Pick an augment | Click a card or press `1` `2` `3` | Tap a card |
+| Pick an augment | Click, or press `1` `2` `3` | Tap a card |
 
-On a player's first deploy, a compact controls reminder sits above the weapon bar for the opening seconds of wave 1 (touch devices see the thumb controls instead).
+Menus work entirely from the keyboard (`↑` `↓` `←` `→`, `Enter`, `Esc`). The full reference, including the debug hotkeys, is in **[docs/CONTROLS.md](docs/CONTROLS.md)**.
 
-Menus support `↑` `↓` and `Enter`. In option groups (weapon, difficulty, quality, touch controls) `←` `→` move the selection; on a focused slider the arrow keys change the value. `Esc` steps back one level (see [Input rules](#input-rules)). The game pauses automatically when the window loses focus or the tab is hidden. During the opening cinematic, `Esc`, `Enter` or `Space` skip it (or tap **Skip intro**).
+## Architecture
 
-## Opening cinematic
-
-A first launch opens with a ~11-second sequence before the main menu:
-
-1. A boot log types out over a dark facility while the dormant reactor pulses.
-2. Power surges outward from the reactor and lights the deck (one brown-out dip, well inside photosensitivity guidance).
-3. The title decodes and locks in with a single chromatic tear and scan line.
-4. The camera cranes out of the reactor well to an establishing shot of the whole platform over the abyss, then **Start Game** appears and the shot holds until the player continues.
-
-It uses the real arena renderer (the `IntroDirector` in `src/game/intro.ts` scripts the camera and lighting; `ui/screens/IntroSequence.tsx` is the overlay). Details:
-
-- **Skippable at any point**: the **Skip intro** button, `Esc`, `Enter` or `Space`. The lights finish coming up in half a second, then the menu takes over.
-- **Shown once**: watching it to the start prompt, or skipping it, sets `introSeen` in the saved profile, so returning players go straight to the menu. Profiles saved by v1.1 load unchanged and simply see it once.
-- **Replay** it from **Credits → Replay intro**, or open the game with `?intro`.
-- **Reduced motion**: a still title card with the same boot summary and the establishing shot. No camera move, typing, decode, flicker or alarm sweep, and **Start Game** is available immediately.
-- **Background tabs**: if the game is opened in a tab that isn't visible, the sequence waits until it is.
-- **Audio**: browsers block sound until the first interaction, so the opening normally plays silently. It has a soundscape (reactor hum, boot ticks, the surge, the title landing) that plays when audio is already unlocked, for example when replayed from Credits. The menu theme starts after the sequence.
-
-## Gameplay
-
-- **Waves**: 10 waves. Waves 5 and 10 are boss fights. Enemies arrive through magenta portals away from you, and briefly materialise before they become active. Clearing a wave awards bonus score and XP (more for a flawless wave), plus a supply drop.
-- **Enemies**:
-  - Hunter Drone: fast melee swarmer.
-  - Sentinel: keeps its distance and fires telegraphed shots.
-  - Brute: charges with a visible wind-up lane.
-  - Wraith: orbits you, dodges your shots and fires bursts.
-  - Splitter: bursts into Mites when destroyed.
-  - Elites: tougher variants with an amber ring and better loot.
-- **Bosses**:
-  - Warden (2 phases): charges into a bullet nova, fires fan volleys, sends shockwave rings with safe gaps, and summons adds.
-  - Null Sovereign (3 phases): spirals, aimed bursts and gapped rings, then sweeping lasers and proximity mines, then crossed lasers and teleport novas.
-  - Every attack is telegraphed. Phase changes clear bullets and grant a short breather.
-- **Weapons**:
-  - Pulse Rifle: infinite ammo.
-  - Scatter Cannon: close-range shards with heavy knockback.
-  - Rail Lancer: piercing slugs.
-  - Seeker Swarm: homing missiles that burst on impact.
-  - Special weapons use ammo. An empty weapon switches back to the Pulse Rifle.
-- **Progression**: kills drop data shards (XP). Each level-up offers 3 random augments out of 21, weighted by rarity, and each one changes real stats. The pool covers damage, fire rate, move speed, crit chance and crit damage, hull, shields, dash cooldown, energy, pickup radius, piercing, multishot, lifesteal, dash damage, explosive rounds, a shield-break EMP, ammo capacity, XP gain, and new weapons.
-- **Pickups**: repair kits (drop more often when you're hurt), energy cells, ammo caches, data cores (bonus score), rare upgrade chips (a free augment with better odds), and four timed power-ups: Overdrive (2× fire rate), Aegis (invulnerable), Amplifier (2× damage) and Chrono Field (enemies slowed).
-- **Scoring**: kill streaks build a combo multiplier of up to ×3. Taking damage resets it.
-- **Fairness**: invulnerability frames after hits, collision push-out so you can't be pinned, dashes that pass through enemies and bullets, spawn portals chosen away from you, and caps on hostile bullet counts.
-
-### Persistence (localStorage)
-
-- **Settings**: volumes, mute, screen shake, reduce motion, damage numbers, graphics quality, FPS counter and touch-control mode.
-- **Records**: high score, best wave, longest run, victories, kills and deployments.
-- **First-run flags**: briefing seen, and opening cinematic seen (`introSeen`, added in v1.2; older profiles default it to `false`).
-- **Unlocks**:
-  - Scatter Cannon loadout: reach wave 3.
-  - Rail Lancer loadout: defeat the Warden.
-  - Seeker Swarm loadout: clear wave 8.
-  - **Nightmare** difficulty: win once.
-- **Continue**: the run is checkpointed at the start of each wave (from wave 2). Continue resumes there with your level, augments, weapons and ammo. Dying or winning clears the checkpoint.
-
-## Visual systems
-
-Everything is drawn procedurally with Canvas 2D. There are no image assets.
-
-- **Layered arena.** Back to front:
-  - The abyss beyond the platform rim: parallax structures far below, with blinking warning lights.
-  - A parallax reactor sub-level, seen through glass floor panels and the central reactor well.
-  - The baked deck: bevelled plates, wear, conduits, painted markings and iris hatches.
-  - Scorch decals.
-  - Dynamic floor lighting from projectiles, explosions, lasers, pickups and the player.
-  - Animated emissives: conduit flow, data pulses, strip lights and portal rings.
-  - Ground hazards and telegraphs.
-  - Pseudo-3D reactor pillars that lean with the camera, with occasional electrical arcs.
-  - Actors and effects.
-  - Rim beacons that sweep during boss fights.
-  - Drifting haze and light shafts.
-- **Combat intensity** drives the mood. Strip lights flicker amber, beacons activate, the reactor shifts toward violet and the colour grade warms as fights escalate.
-- **Presentation layer** (`render/vfx.ts`). It reacts to game events but never feeds back into the simulation. It provides:
-  - per-weapon muzzle flashes, projectile signatures and impacts;
-  - per-enemy death recipes;
-  - shield hit, break, reboot and restore cues;
-  - dash ribbons with refraction;
-  - level-up and pickup bursts;
-  - merged damage numbers.
-- **Bosses**:
-  - Arrivals use a letterbox, a camera lean and pull-back, a light column and converging arcs. The Warden descends; the Null Sovereign assembles ring by ring.
-  - Phase changes have their own effects: the Warden sheds armour plates, the Sovereign adds an overclock ring and turns to a red singularity.
-  - Every telegraph is drawn from the real collision values, so it shows exactly what will hit.
-  - Defeat plays a cracking, shuddering corpse and then a final detonation.
-- **Post-processing** (`render/PostFX.ts`):
-  - screen-space refraction for shockwaves;
-  - a cheap thresholded bloom on a 1/4 and 1/8 resolution copy;
-  - an intensity-driven colour grade and vignette;
-  - an edge-weighted damage flash and damage-direction arcs;
-  - desaturation on pause and death.
-
-  Nothing blurs the full screen.
-- **UI**: screen wipes, level-up cards, a boss intro card, HUD bars with damage trails, a rolling score, a combo tier meter, a CRT-collapse defeat and a victory light-ray reveal. See [Interface](#interface).
-
-## Interface
-
-Menus, HUD and overlays share one visual language. Its tokens are defined at the top of `src/index.css`, and every screen is built from the components in `src/ui/components/`.
-
-### Visual system
-
-- **Colour roles**:
-  - cyan: interaction, focus and selection;
-  - violet: energy and progression;
-  - amber: warnings;
-  - red: critical and destructive;
-  - mint: health and success;
-  - magenta: hostile and boss.
-
-  No state relies on colour alone. Selected, available and locked loadouts, card rarity, low and empty ammo, critical hull and a new record also carry a word, an icon or a pip count.
-- **Contrast**: on panel surfaces the three text tiers measure at least 13:1, 7:1 and 4.5:1 (WCAG 2 ratio), and every accent colour at least 4.5:1. `src/ui/tokens.test.ts` recomputes these from the stylesheet. This measures the tokens; it is not an accessibility audit.
-- **Type**: Oxanium for display text and labels, JetBrains Mono for numbers. Seven steps (display, title, heading, body, small, label, caption), each with its own size, line height, tracking and weight. The root size grows from 16 px to 19 px on large displays.
-- **Shape**:
-  - Chamfered panels (three corner sizes) with 1 px inset frames, in tones for accent, danger, success and progress.
-  - Focus is a 2 px inset cyan ring, because the chamfer's clip-path would clip an outline.
-  - Hover brightens the surface and draws an accent bar; pressed scales slightly; disabled fades to 40%.
-- **Motion**:
-  - Five durations: press 90 ms, hover and focus 140 ms, state change 220 ms, panel entrance 420 ms, reveal 700 ms. Three easing curves.
-  - Reduce motion collapses decorative animation. Anything the motion carried (score count-up, card reveals) appears in its final state instead.
-- **Layers** (`--z-*`), bottom to top: canvas, HUD, touch controls, in-run overlays (pause, level-up, results), screens, scanlines, screen wipe, error screen.
-- **Components**:
-  - Controls: Button (four variants, four sizes), Toggle, Slider, Segmented, Badge, Stat, Panel and KeyCap.
-  - Layout: ScreenShell, ScreenHeader and ActionBar lay out every screen.
-  - WeaponEmblem draws each weapon as the projectile it fires.
-
-### Input rules
-
-- **One gesture, one action.**
-  - Holding `Enter` or `Space` activates a control once.
-  - A control that has only just appeared ignores the second half of a double-click or double tap. So a double-click on **Reset progress** cannot land on **Erase everything**, and a double-click on **Deploy** cannot skip the briefing.
-  - Buttons also ignore repeats within 350 ms.
-- **`Esc` steps back one level.**
-  - It goes from a sub-screen back to wherever the sub-screen was opened, from a confirmation back to its menu, and from pause back to play.
-  - It does nothing on the main menu, during a level-up or on the results screen, so it never starts, restarts or abandons a run.
-  - Holding it acts once.
-- **Destructive confirmations** (restart, quit to menu, reset progress) open with **Cancel** focused.
-- **Arming delays.** Results ignore input for 0.7 s, then focus **Retry** (or **New Run** after a victory). Level-up cards accept input after 0.55 s, and a weapon key still held from the fight never picks one.
-- **Focus** returns to the control that opened a screen. Option groups have one tab stop each, and their arrow keys skip locked choices.
-
-### Landing page
-
-The main menu is a full-viewport launcher over the live arena (`ui/screens/MainMenu.tsx`, with its styles under "Landing page" in `src/index.css`).
-
-- **One grid, five areas**:
-  - a status bar;
-  - the title column, an open stage and the operative record;
-  - the footer.
-
-  Spacing and type use `clamp()` against width and height separately. The title also scales with its column through container-query units, so it never wraps or crowds the record.
-- **Layouts follow the available space**, not device classes:
-  - **Wide (1200 px and up)**: title and actions on the left, the record on the right, and the reactor framed in the open stage between them. On ultrawide screens the composition stops growing at 190vh, about 2050 px for a 1080 px tall window, while the arena keeps running edge to edge.
-  - **Mid-width (900 to 1199 px)**: the title column and the record side by side.
-  - **Narrow (under 900 px)**: one column with the record under the actions; it scrolls if needed.
-  - **Phones on their side**: two compact columns.
-  - **Short windows**: the status bar and the optional footer hints go first, then decorative spacing. Text sizes hold.
-- **Framing**:
-  - The layout reports where its stage is, on resize only. The menu camera (`game/menuFraming.ts`) puts the reactor at the stage's centre, at a zoom sized to it, so the reactor is never cut off at any aspect ratio.
-  - A slow drift and a little pointer parallax move the deck's layers against each other. Reduce motion holds a still composition.
-  - The reactor stays softly powered while the menu is up.
-- **Actions**:
-  - **Continue** is the primary action when a checkpoint exists; otherwise **New Run** is.
-  - An unavailable Continue reads as an empty slot: legible, but plainly inert.
-  - How to Play, Settings and Credits form one strip.
-- **Operative record**: everything comes from the saved profile:
-  - high score and deployments;
-  - best wave, longest run, victories and hostiles;
-  - loadout emblems with their lock states, and the next unlock;
-  - Nightmare's status and its requirement.
-- **Checked by `npm run landing:qa`**:
-  - ten viewports from 1280×720 to 2560×1080, plus tablet and 390 px and 320 px phones;
-  - three player states;
-  - a live-resize pass.
-
-### Responsive layout
-
-- **Checked viewports**: 320×568, 390×844, 430×932, phone landscape 844×390, tablet 768×1024 and 1024×768, 1280×720, 1440×900 at 2×, and 2560×1080.
-- **`npm run screens`** captures every important state at each viewport and audits it for:
-  - horizontal overflow;
-  - controls that leave the viewport;
-  - touch targets under 44 px;
-  - overlapping controls;
-  - truncated labels.
-- **Touch**: targets are at least 44×44 px, and screens respect safe-area insets. Screens taller than the viewport scroll, and the loadout keeps **Deploy** in a sticky bar.
-- **HUD layout**:
-  - Vitals sit top-left, score top-right, and wave status or the boss bar top-centre.
-  - Along the bottom: dash readiness, the weapon bar and active power-ups. On touch screens the weapons stack bottom-left, clear of the thumb controls.
-  - On narrow screens the boss bar drops to a second row and notices move to the bottom centre.
-  - On short landscape phones, banners take the top status slot so nothing covers the middle of the arena.
-
-## Audio
-
-All sound is synthesised at runtime (Web Audio API) and runs through a compressor/limiter.
-
-- **Mix**: each effect has a trim in `MIX` (`src/game/audio/AudioEngine.ts`), set from offline loudness measurements so effects sit in a consistent order at default volumes: rare big events loudest, then heavy impacts, weapons and player feedback, cues and stingers, frequent small sounds, and the interface quietest. `npm run audio:levels` renders every effect, the three music modes and the ambience offline and prints sample peak and K-weighted loudness. **These levels were set and checked by measurement only; they have not been verified by listening.**
-- **Readable bosses**: wind-up cues per attack family. The Warden's charge, stomp rumble and volley lock-on, and a pitched lock-on chirp for each Null Sovereign bullet pattern, are separate from laser charge and teleport. Phase changes have their own stinger.
-- **Ambience**: a restrained reactor hum (low A, octave, faint fifth and band-passed air) under the opening, the menu and, quietly, combat. It follows the music volume.
-- **Behaviour**: nothing plays before the first user gesture (pointer, key or touch). Mute zeroes the master bus, the sliders move it smoothly, and the context is suspended while the tab is hidden and resumed afterwards. If Web Audio is unavailable, the game runs silently.
-
-### Quality and performance
-
-- **Low / Medium / High** presets control resolution, lighting, bloom, refraction, haze, parallax, decals, emitters, shadows and grading.
-- An **adaptive governor** (`render/PerfGovernor.ts`) watches frame pacing. When the device drops frames or can't hold about 50 fps, it steps decorative cost down, and steps back up with headroom. It has five levels; the last drops lighting, grading and shadows and renders at 0.6× resolution. It never exceeds the chosen preset and never touches gameplay. If the browser reports a software renderer, it starts conservatively.
-- **Reduce motion** follows the OS preference by default and can be toggled in Settings. It removes refraction, zoom punches, camera leans and strobing flashes, collapses decorative UI animation, and replaces the opening cinematic with a still title card. Screen shake stays on its own slider.
-
-## Project structure
-
+```mermaid
+flowchart LR
+    UI["React UI<br/>screens, HUD, touch controls"] -- "start, pause, choose augment" --> Game
+    Game["Game engine<br/>rAF loop, fixed sub-steps"] --> Systems["Systems<br/>waves, AI, bosses, combat,<br/>weapons, pickups, upgrades"]
+    Game --> Renderer["Canvas 2D renderer<br/>layers, lighting, VFX, post-FX"]
+    Game --> Audio["Web Audio engine<br/>synthesised SFX and music"]
+    Game -- "phase + HUD snapshot (~12 Hz)" --> Store["External store"]
+    Store -- useSyncExternalStore --> UI
+    Game <--> Saves[("localStorage<br/>settings, profile, checkpoint")]
 ```
+
+- **The engine is framework-free.** `src/game/` has no React imports. It owns one `requestAnimationFrame` loop with ≤ 1/60 s sub-steps, so movement is frame-rate independent and fast bullets don't tunnel.
+- **React never renders per frame.** The UI subscribes to a small store that pushes phase changes immediately and HUD snapshots at about 12 Hz.
+- **Presentation is one-way.** The VFX layer reacts to game events but never feeds back into the simulation.
+- **Saves are validated.** Every `localStorage` read goes through a sanitiser, so corrupt or old data can't crash the game. Saves from v1.1 still load.
+
+```text
 src/
-  game/                 Framework-free engine (no React imports)
-    Game.ts             Lifecycle, rAF loop, run state, combat resolution, UI bridge
-    Input.ts            Keyboard / mouse / virtual-touch input with cleanup
-    Camera.ts           Follow camera, zoom-to-fit, trauma-based screen shake
-    SpatialGrid.ts      Broad-phase collision grid
-    store.ts            External store read by React (phase + throttled HUD snapshot)
-    persistence.ts      Validated localStorage stores (settings, profile, run save)
-    constants.ts        Tuning: world size, player base stats, difficulty, quality
-    intro.ts            Opening cinematic: camera, lighting and cue timeline (pure, unit-tested)
-    menuFraming.ts      Landing-page camera framing of the reactor (pure, unit-tested)
-    entities/           Player, Enemy (+ definitions), Projectile, Pickup, Hazard
-    systems/            enemyAI, boss, director (wave pacing), waves, combat,
-                        pickups, upgrades, weapons
-    render/             Renderer (layer orchestration), Arena (generation + floor bake),
-                        Environment (abyss, sub-level, emissives, pillars, atmosphere),
-                        vfx (event-driven presentation), Effects (pooled particles),
-                        Lighting, PostFX, PerfGovernor, sprites, draw/* per actor type
-    audio/AudioEngine   Procedural SFX, music sequencer, reactor ambience, mix trims,
-                        limiter, offline level measurement
-  ui/                   React + Tailwind interface
-    components/         Shared controls (Button, Toggle, Slider, Segmented, Badge, Stat, Panel),
-                        screen layout (ScreenShell, ScreenHeader, ActionBar), WeaponEmblem, Icon
-    screens/            Intro, menu, loadout, briefing, settings, credits, pause, level-up, results
-    hud/                HUD and touch controls
-    input.ts            Shared input rules (held keys, double-click guard)
-  App.tsx               Screen routing; mounts/unmounts the engine
-scripts/
-  e2e.mjs               Browser end-to-end smoke test (Playwright + local Chrome)
-  balance.mjs           Fast-forward bot simulation for difficulty tuning
-  perf.mjs              Frame-cost and frame-pacing probe across heavy scenarios
-  audio-levels.mjs      Offline loudness and peak report for every sound
-  soak.mjs              Repeated intro/run/boss/quit cycles; checks nothing accumulates
-  screens.mjs           Screenshot matrix (states × viewports) with a layout audit
-  landing-qa.mjs        Landing page at ten viewports and three player states, plus a live resize
+├── game/          Engine: Game loop, Input, Camera, SpatialGrid, persistence
+│   ├── systems/   director, waves, enemyAI, boss, combat, weapons, pickups, upgrades
+│   ├── entities/  Player, Enemy, Projectile, Pickup, Hazard
+│   ├── render/    Renderer, Environment, Lighting, vfx, Effects, PostFX, PerfGovernor
+│   └── audio/     AudioEngine (procedural SFX, music, ambience)
+└── ui/            React: screens, HUD, touch controls, shared components
+scripts/           Browser automation: e2e, screenshots, perf, soak, audio levels
+docs/              Guides and technical documentation
 ```
 
-### Architecture notes
+Read more in **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** (systems, render layers, audio, persistence) and **[docs/INTERFACE.md](docs/INTERFACE.md)** (design system, input rules, responsive layout).
 
-- The engine owns a single `requestAnimationFrame` loop. Frame time is clamped to 100 ms and split into ≤ 1/60 s sub-steps, so movement is frame-rate independent and fast projectiles don't tunnel. Hit-stop and slow-motion are applied on top.
-- React never re-renders per frame. Phase changes are pushed immediately, and the HUD snapshot is published at about 12 Hz via `useSyncExternalStore`.
-- `Game.mount` / `Game.unmount` are symmetrical and idempotent, so React StrictMode's double-mount can't produce duplicate loops. Listeners, the `ResizeObserver` and the `AudioContext` are all released on unmount.
-- Glow is drawn with cached radial-gradient sprites and additive blending instead of `shadowBlur`. The arena floor is baked once per run into an offscreen canvas.
-- Projectiles are pooled. Enemies are bucketed in a spatial grid for bullet, contact and separation queries.
-- Audio starts only after a user gesture, runs through a compressor/limiter, throttles repeated sounds and caps voices. If Web Audio is unavailable, the game runs silently.
-- Errors in the game loop halt the simulation and show a recovery screen. A React error boundary covers the UI.
+## Testing
 
-## Scripts
-
-| Command | What it does |
+| Command | Checks |
 | --- | --- |
-| `npm run dev` | Vite dev server with HMR |
-| `npm run build` | `tsc -b` type-check, then production bundle |
-| `npm run preview` | Serve the production build |
-| `npm run lint` | ESLint (typescript-eslint + react-hooks) |
-| `npm test` | Vitest unit tests (upgrades, waves, persistence incl. v1.1 saves, collision, player, adaptive quality, opening cinematic timeline, landing-page framing, upgrade card text, design-token contrast) |
-| `npm run test:e2e` | Browser smoke test; needs `npm run preview` running on port 4173 and a local Chrome (`CHROME_PATH` to override) |
-| `npm run balance` | Bot simulation across difficulties; needs the preview server |
-| `npm run perf` | Frame cost and pacing per scenario (opening cinematic, menu, heavy combat, bosses); needs the preview server. Flags: `--quality=low\|medium\|high`, `--software` (CPU rasterisation, as a weak-GPU stand-in), `--width --height --dpr`, `--throttle=N` |
-| `npm run audio:levels` | Offline peak and loudness report for every effect, music mode and the ambience; needs the preview server |
-| `npm run soak` | Cycles intro, run, boss fight and quit through the UI and checks heap, DOM, listeners, loops and caches stay flat; needs the preview server (`-- --cycles=N`) |
-| `npm run landing:qa` | Landing page at ten viewports and three player states, plus a live-resize pass. Checks canvas coverage, overflow, page scrolling on desktop sizes, collisions, clipped text and touch targets; writes PNGs, `report.json` and `index.html`. Needs the preview server (`-- --out=DIR --viewports=1440x900,... --states=veteran,continue,first`) |
-| `npm run screens` | Captures every important screen at nine viewports and audits each for layout problems; writes PNGs, `report.json` and `index.html`; needs the preview server (`-- --out=DIR --viewports=a,b --chains=first,menu,combat,victory`) |
+| `npm run lint` | ESLint with typescript-eslint and React Hooks rules |
+| `npm run typecheck` | TypeScript strict mode |
+| `npm test` | Vitest unit tests: waves, augments, saves, input, collision, adaptive quality, cinematic and menu framing, design-token contrast |
+| `npm run build` | Type-check and production bundle |
+| `npm run test:e2e` | Drives the production build in headless Chrome: intro, menus, full runs, bosses, saves and Continue, audio unlock, focus and `Esc` rules, touch layout, and a clean console |
 
-## Debug mode
+[GitHub Actions](.github/workflows/ci.yml) runs lint, type-check, unit tests and the build on Node 22 and 24, then the end-to-end suite, on every push to `main` and every pull request.
 
-Append `?debug` to the URL to expose `window.__shadow` (the `Game` instance) and enable hotkeys during play:
+Further scripts cover layout audits across nine viewports, frame pacing, memory soak tests and audio loudness. **[docs/TESTING.md](docs/TESTING.md)** explains each one and records the latest results.
 
-| Key | Effect |
-| --- | --- |
-| `K` | Kill all non-boss enemies and empty the spawn queue |
-| `N` | Skip to the next wave |
-| `G` | Toggle god mode |
-| `L` | Grant a level-up |
-| `H` | Deal 20% damage to the current boss |
+## Roadmap
 
-Debug mode is off unless the query parameter is present. `?intro` replays the opening cinematic (it combines with `?debug`).
+**Shipped in 1.3:** the full game loop (10 waves, 2 multi-phase bosses, 4 weapons, 21 augments), persistence and Continue, touch controls, the opening cinematic, the responsive full-screen menu, and adaptive quality.
 
-## Deploying
+**Next:**
 
-```bash
-npm ci
-npm run build          # outputs dist/
-```
+- [ ] Test on real iOS and Android devices, Safari and Firefox
+- [ ] A screen-reader pass and a listening pass on the audio mix
+- [ ] A public playable build (GitHub Pages; [instructions ready](docs/DEPLOYMENT.md#github-pages))
+- [ ] Gamepad support
+- [ ] Key remapping
+- [ ] A touch control for cycling to the previous weapon
 
-Upload the contents of `dist/` to any static host (Netlify, Vercel static, GitHub Pages, S3/CloudFront, nginx, and so on). Asset paths are relative (`base: './'`), so it also works from a sub-directory such as `https://example.com/games/shadow-protocol/`. No server-side code, environment variables or rewrites are needed. Saves live in the player's `localStorage` for that origin.
+Current limitations are listed in **[docs/KNOWN_ISSUES.md](docs/KNOWN_ISSUES.md)**.
 
-To check a build locally the way a host would serve it: `npm run preview`, or any static server pointed at `dist/`.
+## Contributing
+
+Bug reports, device test results and pull requests are welcome. Start with **[CONTRIBUTING.md](CONTRIBUTING.md)**, follow the **[code of conduct](CODE_OF_CONDUCT.md)**, and report security issues privately as described in **[SECURITY.md](SECURITY.md)**. Changes are tracked in the **[changelog](CHANGELOG.md)**.
+
+## Credits and license
+
+Design and development by **[Tanmay Tyagi](https://github.com/tanmaytyagii)**.
+
+Built with [React](https://react.dev), [TypeScript](https://www.typescriptlang.org), [Vite](https://vite.dev), [Tailwind CSS](https://tailwindcss.com), [Vitest](https://vitest.dev) and [Playwright](https://playwright.dev). The typefaces are [Oxanium](https://fonts.google.com/specimen/Oxanium) and [JetBrains Mono](https://www.jetbrains.com/lp/mono/), both under the SIL Open Font License 1.1, self-hosted through [Fontsource](https://fontsource.org).
+
+**License:** this repository doesn't have a license yet, so all rights are reserved by the author. You're welcome to play it, read the code and open issues or pull requests, but reuse or redistribution needs the author's permission.

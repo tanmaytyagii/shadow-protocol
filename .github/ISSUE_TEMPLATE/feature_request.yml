@@ -1,0 +1,22 @@
+name: Feature or balance idea
+description: Suggest a feature, a gameplay change or a balance tweak.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What would you add or change?
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: What problem does it solve, or what would it make better? For balance changes, which wave, weapon or difficulty felt off?
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else

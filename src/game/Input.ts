@@ -126,8 +126,9 @@ export class Input {
     let slot = 0
     for (let i = 1; i <= 4; i++) if (this.pressed.has(`Digit${i}`)) slot = i
     let cycle = 0
-    if (this.pressed.has('KeyQ') || this.touchSwapQueued) cycle += 1
-    if (this.pressed.has('KeyE')) cycle += 1
+    // Q steps back and E forward, like the wheel; the touch Swap button steps forward.
+    if (this.pressed.has('KeyQ')) cycle -= 1
+    if (this.pressed.has('KeyE') || this.touchSwapQueued) cycle += 1
     if (this.wheel !== 0) cycle += this.wheel > 0 ? 1 : -1
 
     const controls: Controls = {

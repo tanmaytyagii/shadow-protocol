@@ -1419,6 +1419,8 @@ export class Game {
     this.input.capture = false
     this.input.reset()
     this.audio.setMuffled(true)
+    // Settle the rolling score so the frozen HUD agrees with the pause panel.
+    this.scoreShown = this.score
     this.publishHud(1)
     this.store.set({ phase: 'paused' })
     this.renderDirty = true
